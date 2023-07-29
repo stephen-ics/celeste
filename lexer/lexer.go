@@ -9,12 +9,6 @@ type Lexer struct {
 	ch byte // current char under examination
 }
 
-func New(input string) *Lexer {
-	l := &Lexer{input: input}
-	l.reachChar()
-	return l
-}
-
 func (l *lexer) readChar() {
 	if l.readPosition >= len(l.input) {
 		l.ch = 0
@@ -25,6 +19,14 @@ func (l *lexer) readChar() {
 	l.position = l.readPosition
 	l.readPosition += 1
 }
+
+
+func New(input string) *Lexer {
+	l := &Lexer{input: input}
+	l.reachChar()
+	return l
+}
+
 
 func (l *lexer) NextToken() token.Token {
 	var tok token.Token
