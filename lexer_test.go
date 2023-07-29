@@ -1,10 +1,10 @@
 package lexer
 
-import { 
+import (
 	"testing"
 
 	"compiler/token"
-}
+)
 
 func TestNextToken(t *testing.T) {
 	input := `=+(){},;`
