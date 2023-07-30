@@ -26,7 +26,7 @@ func TestLetStatements(t *testing.T) {
 		t.Fatalf("program.Statements does not contain 3 statements, got=%d", len(program.Statements))
 	}
 
-	test := []struct {
+	tests := []struct {
 		expectedIdentifier string
 	} {
 		{"x"},
@@ -37,19 +37,19 @@ func TestLetStatements(t *testing.T) {
 	for i, tt := range tests {
 		stmt := program.Statements[i]
 
-		if !TestLetStatements(t, stmt, tt.expectedIdentifier) {
+		if !testLetStatements(t, stmt, tt.expectedIdentifier) {
 			return 
 		}
 	}
 }
 
-func testLetStatements(t *testing.T, s ast.Statement, tt.expectedIdentifier) bool {
+func testLetStatements(t *testing.T, s ast.Statement, name string) bool {
 	if s.TokenLiteral() != "let" {
 		t.Errorf("s.TokenLiteral not 'let', got=%q", s.TokenLiteral())
 		return false
 	}
 
-	let stmt, ok := s.(*ast.LetStatement)
+	letStmt, ok := s.(*ast.LetStatement)
 	if !ok {
 		t.Errorf("s not *ast.LetStatement, got=%T", s)
 		return false
