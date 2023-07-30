@@ -1,3 +1,3 @@
-module compiler
+module interpreter
 
 go 1.20
