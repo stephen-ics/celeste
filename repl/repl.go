@@ -6,6 +6,7 @@ import (
 	"io"
 	"interpreter/lexer"
 	"interpreter/parser"
+	"interpreter/evaluator"
 //	"interpreter/token"
 )
 
@@ -26,9 +27,9 @@ func Start(in io.Reader, out io.Writer) {
 
 
 // 		Outputs tokenization 
-//		for tok := l.NextToken(); tok.Type != token.EOF; tok = l.NextToken() {
-//			fmt.Printf("%+v\n", tok)
-//		}
+		// for tok := l.NextToken(); tok.Type != token.EOF; tok = l.NextToken() {
+		// 	fmt.Printf("%+v\n", tok)
+		// }
 
 //		Outputs parsed data 
 		p := parser.New(l)
@@ -39,8 +40,14 @@ func Start(in io.Reader, out io.Writer) {
 			continue
 		}
 
-		io.WriteString(out, program.String())
-		io.WriteString(out, "\n")
+		// io.WriteString(out, program.String())
+		// io.WriteString(out, "\n")
+
+		evaluated := evaluator.Eval(program)
+		if evaluated != nil {
+			io.WriteString(out, evaluated.Inspect())
+			io.WriteString(out, "\n")
+		}
 	}
 }
 
