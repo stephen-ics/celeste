@@ -205,6 +205,21 @@ func TestClosuers(t *testing.T) {
 	testIntegerObject(t, testEval(input), 4)
 }
 
+func TestStringLiteral(t *testing.T) {
+	input := `"Hello World!"`
+
+	evaluated := testEval(input)
+
+	str, ok := evaluated.(*object.String)
+	if !ok {
+		t.Fatalf("object is not a String. got=%T (%+v)", evaluated, evaluated)
+	}
+
+	if str.Value != "Hello World!" {
+		t.Errorf("String has wrong value. got=%q", str.Value)
+	} 
+}
+
 func TestErrorHandling(t *testing.T) {
 	tests := []struct {
 		input string
