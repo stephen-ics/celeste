@@ -192,7 +192,7 @@ func TestFunctionApplication(t *testing.T) {
 	}
 }
 
-func TestClosuers(t *testing.T) {
+func TestClosures(t *testing.T) {
 	input := `
 		let newAdder = fn(x) {
 			fn(y) { x + y }
@@ -312,6 +312,31 @@ func TestArrayIndexExpressions(t *testing.T) {
 	}
 }
 
+func TestArrayBuiltinFunctions(t *testing.T) {
+	tests := []struct {
+		input string
+		expected interface{}
+	} {
+		{"len([1, 2, 3])", 3},
+		{"first([1, 2, 3])", 1},
+		{"last([1, 2, 3])", 3},
+		{"rest([1, 2, 3])", []int{2, 3}},
+		{"push([1, 2, 3], 4)", []int{1, 2, 3, 4}},
+	}
+
+	for _, tt := range tests {
+		evaluated := testEval(tt.input)
+
+		switch exp := tt.expected.(type) {
+		case int:
+			testIntegerObject(t, evaluated, int64(exp))
+
+		case []int:
+			testArrayObject(t, evaluated, exp)
+		}		
+	}
+}
+
 func TestErrorHandling(t *testing.T) {
 	tests := []struct {
 		input string
@@ -411,6 +436,27 @@ func testBooleanObject(t *testing.T, obj object.Object, expected bool) bool {
 	if result.Value != expected {
 		t.Errorf("object has wrong value. got=%t, want=%t", result.Value, expected)
 		return false
+	}
+
+	return true
+}
+
+func testArrayObject(t *testing.T, obj object.Object, expected []int) bool {
+	arr, ok := obj.(*object.Array)
+	if !ok {
+		t.Errorf("object is not Array. got=%T (%+v)", obj, obj)
+		return false
+	}
+
+	if len(arr.Elements) != len(expected) {
+		t.Errorf("wrong number of elements. got=%d, want=%d", len(arr.Elements), len(expected))
+		return false
+	}
+
+	for i, el := range arr.Elements {
+		if !testIntegerObject(t, el, int64(expected[i])) {
+			return false
+		}
 	}
 
 	return true
