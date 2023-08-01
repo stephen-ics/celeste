@@ -112,7 +112,7 @@ func (l *Lexer) NextToken() token.Token {
 			tok = newToken(token.LBRACE, l.ch)
 		case '}':
 			tok = newToken(token.RBRACE, l.ch)
-		case '"':
+		case '"': // Add support for \n,\t!, raise an error when reaching the end of an input
 			tok.Type = token.STRING
 			tok.Literal = l.readString()
 		default:
