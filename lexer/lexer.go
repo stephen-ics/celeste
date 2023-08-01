@@ -102,6 +102,8 @@ func (l *Lexer) NextToken() token.Token {
 			tok = newToken(token.GT, l.ch)
 		case ';':
 			tok = newToken(token.SEMICOLON, l.ch)
+		case ':':
+			tok = newToken(token.COLON, l.ch)
 		case '(':
 			tok = newToken(token.LPAREN, l.ch)
 		case ')':
