@@ -63,7 +63,7 @@ func (i *Identifier) String() string { return i.Value }
 
 type ReturnStatement struct {
 	Token token.Token // the token.RETURN token
-	returnValue Expression
+	ReturnValue Expression
 }
 
 func (rs *ReturnStatement) statementNode() {}
@@ -107,8 +107,8 @@ func (rs *ReturnStatement) String() string {
 
 	out.WriteString(rs.TokenLiteral() + " ")
 
-	if rs.returnValue != nil {
-		out.WriteString((rs.returnValue.String()))
+	if rs.ReturnValue != nil {
+		out.WriteString((rs.ReturnValue.String()))
 	}
 	
 	out.WriteString(";")
@@ -240,3 +240,28 @@ func (fl *FunctionLiteral) String() string {
 	
 	return out.String()
 }
+
+type CallExpression struct {
+	Token token.Token // The '( token'
+	Function Expression // The Identifier or Function Literal
+	Arguments []Expression
+}
+
+func (ce *CallExpression) expressionNode() {}
+func (ce *CallExpression) TokenLiteral() string { return ce.Token.Literal }
+func (ce *CallExpression) String() string {
+	var out bytes.Buffer
+
+	args := []string{}
+	for _, a := range ce.Arguments {
+		args = append(args, a.String())
+	}
+
+	out.WriteString(ce.Function.String())
+	out.WriteString("(")
+	out.WriteString(strings.Join(args, ", "))
+	out.WriteString(")")
+
+	return out.String()
+}
+
