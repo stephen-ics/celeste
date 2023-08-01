@@ -52,6 +52,7 @@ func New(l *lexer.Lexer) *Parser {
 	p.registerInfix(token.LT, p.parseInfixExpression)
 	p.registerInfix(token.GT, p.parseInfixExpression)
 	p.registerInfix(token.LPAREN, p.parseCallExpression)
+	p.registerInfix(token.LBRACKET, p.parseIndexExpression)
 
 	// Read two tokens, so curToken and peekToken are both set
 	p.NextToken()
@@ -162,6 +163,7 @@ const (
 	PRODUCT // *
 	PREFIX // -X or !X
 	CALL // myFunction(X)
+	INDEX // array[index]
 )
 
 var presedences = map[token.TokenType] int { // Map is declared with token.TokeType keys and int values
@@ -174,6 +176,7 @@ var presedences = map[token.TokenType] int { // Map is declared with token.TokeT
 	token.SLASH: PRODUCT,
 	token.ASTERIK: PRODUCT,
 	token.LPAREN: CALL,
+	token.LBRACKET: INDEX,
 }
 
 func (p *Parser) parseExpression(precedence int) ast.Expression {
@@ -396,6 +399,19 @@ func (p *Parser) parseExpressionList(end token.TokenType) []ast.Expression {
 	}
 	
 	return list
+}
+
+func (p *Parser) parseIndexExpression(left ast.Expression) ast.Expression {
+	exp := &ast.IndexExpression{Token: p.curToken, Left: left}
+
+	p.NextToken()
+	exp.Index = p.parseExpression(LOWEST)
+
+	if !p.expectPeek(token.RBRACKET) {
+		return nil
+	}
+
+	return exp
 }
 
 func (p *Parser) noPrefixParseFnError(t token.TokenType) {
