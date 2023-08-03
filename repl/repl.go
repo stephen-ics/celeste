@@ -4,10 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"interpreter/lexer"
-	"interpreter/parser"
-	"interpreter/evaluator"
-	"interpreter/object"
+	"compiler/lexer"
+	"compiler/parser"
+	"compiler/evaluator"
+	"compiler/object"
 //	"interpreter/token"
 )
 

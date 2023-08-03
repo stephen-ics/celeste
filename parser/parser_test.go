@@ -3,8 +3,8 @@ package parser
 import (
 	"testing"
 	"fmt"
-	"interpreter/ast"
-	"interpreter/lexer"
+	"compiler/ast"
+	"compiler/lexer"
 )
 
 func TestLetStatements(t *testing.T) {

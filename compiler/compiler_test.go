@@ -2,11 +2,11 @@ package compiler
 
 import (
 	"fmt"
-	"interpreter/ast"
-	"interpreter/code"
-	"interpreter/lexer"
-	"interpreter/parser"
-	"interpreter/object"
+	"compiler/ast"
+	"compiler/code"
+	"compiler/lexer"
+	"compiler/parser"
+	"compiler/object"
 	"testing"
 )
 

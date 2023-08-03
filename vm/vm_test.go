@@ -2,11 +2,11 @@ package vm
 
 import (
 	"fmt"
-	"interpreter/ast"
-	"interpreter/compiler"
-	"interpreter/lexer"
-	"interpreter/object"
-	"interpreter/parser"
+	"compiler/ast"
+	"compiler/compiler"
+	"compiler/lexer"
+	"compiler/object"
+	"compiler/parser"
 	"testing"
 )
 
