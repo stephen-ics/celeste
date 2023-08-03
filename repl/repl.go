@@ -8,7 +8,7 @@ import (
 	"compiler/lexer"
 	"compiler/parser"
 //	"compiler/evaluator"
-	"compiler/object"
+//	"compiler/object"
 //	"compiler/token"
 	"compiler/vm"
 )
@@ -17,7 +17,7 @@ const PROMPT = ">> "
 
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
-	env := object.NewEnvironment()
+//	env := object.NewEnvironment()
 
 	for {
 		fmt.Printf(PROMPT)
