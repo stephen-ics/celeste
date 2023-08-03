@@ -47,7 +47,7 @@ func (ins Instructions) fmtInstruction(def *Definition, operands []int) string {
 }
 
 const (
-	OpConstant Opcode = iota
+	OpConstant Opcode = iota // Push constant onto stack opcode number (0)
 )
 
 type Definition struct {
@@ -55,12 +55,12 @@ type Definition struct {
 	OperandWidths []int
 }
 
-var definitions = map[Opcode]*Definition{
+var definitions = map[Opcode]*Definition { // This associates the operator (by opcode) to its definition -> operandwidth and name 
 	OpConstant: {"OpConstant", []int{2}},
 }
 
 func Lookup(op byte) (*Definition, error) {
-	def, ok := definitions[Opcode(op)]
+	def, ok := definitions[Opcode(op)] // Converts op from type byte to type Opcode so that it is able to refer to values in the definitions map which only accepts type Opcode
 	if !ok {
 		return nil, fmt.Errorf("opcode %d undefined", op)
 	}
