@@ -39,6 +39,8 @@ func (ins Instructions) fmtInstruction(def *Definition, operands []int) string {
 	}
 
 	switch operandCount{
+	case 0:
+		return def.Name
 	case 1:
 		return fmt.Sprintf("%s %d", def.Name, operands[0])
 	}
@@ -48,6 +50,7 @@ func (ins Instructions) fmtInstruction(def *Definition, operands []int) string {
 
 const (
 	OpConstant Opcode = iota // Push constant onto stack opcode number (0)
+	OpAdd
 )
 
 type Definition struct {
@@ -57,6 +60,7 @@ type Definition struct {
 
 var definitions = map[Opcode]*Definition { // This associates the operator (by opcode) to its definition -> operandwidth and name 
 	OpConstant: {"OpConstant", []int{2}},
+	OpAdd: {"OpAdd", []int{}}, // OpAdd has no operands
 }
 
 func Lookup(op byte) (*Definition, error) {

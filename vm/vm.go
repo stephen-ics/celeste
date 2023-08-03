@@ -39,8 +39,15 @@ func (vm *VM) Run() error {
 			err := vm.push(vm.constants[constIndex])
 			if err != nil {
 				return err
-			}
-			
+			}	
+			case code.OpAdd:
+				right := vm.pop() // This assumes the right operator is the last one to be pushed onto the stack, this will affect the result for operators like "-"
+				left := vm.pop()
+				rightValue := right.(*object.Integer).Value
+				leftValue := left.(*object.Integer).Value
+
+				result := leftValue + rightValue
+				vm.push(&object.Integer{Value: result})
 		}
 	}
 
@@ -64,4 +71,11 @@ func (vm *VM) push(o object.Object) error {
 	vm.sp++
 
 	return nil
+}
+
+func (vm *VM) pop() object.Object {
+	o := vm.stack[vm.sp-1]
+	vm.sp--
+
+	return o
 }

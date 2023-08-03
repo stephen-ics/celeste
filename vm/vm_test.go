@@ -49,7 +49,7 @@ func TestIntegerArithmetic(t *testing.T) {
 	tests := []vmTestCase{
 		{"1", 1},
 		{"2", 2},
-		{"1 + 2", 2}, //TODO: FIX THIS LATER -> Currently just tests to see if the StackTop() function pushes the 2, which is suppose to be at the top of this VMs stack in this test case
+		{"1 + 2", 3},
 	}
 
 	runVmTests(t, tests)
