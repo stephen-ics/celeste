@@ -6,7 +6,7 @@ import (
 )
 
 var builtins = map[string]*object.Builtin{
-	"len": &object.Builtin{
+	"len": { // Do not need to define output type here, redundant
 		Fn: func(args ...object.Object) object.Object {
 			if len(args) != 1 {
 				return newError("wrong number of arguments. got=%d, want=1", len(args))
@@ -22,7 +22,7 @@ var builtins = map[string]*object.Builtin{
 			}
 		},
 	},
-	"first": &object.Builtin{
+	"first": {
 		Fn: func(args ...object.Object) object.Object {
 			if len(args) != 1 {
 				return newError("wrong number of arguments, want=1, got=%d", len(args))
@@ -39,7 +39,7 @@ var builtins = map[string]*object.Builtin{
 			return NULL
 		},
 	},
-	"last": &object.Builtin{
+	"last": {
 		Fn: func(args ...object.Object) object.Object {
 			if len(args) != 1 {
 				return newError("wrong numbr of arguments, want=1, got=%d", len(args))
@@ -56,7 +56,7 @@ var builtins = map[string]*object.Builtin{
 			return NULL
 		},
 	},
-	"rest": &object.Builtin{
+	"rest": {
 		Fn: func(args ...object.Object) object.Object {
 			if len(args) != 1 {
 				return newError("wrong number of arguments, want=1, got=%d", len(args))
@@ -77,7 +77,7 @@ var builtins = map[string]*object.Builtin{
 			return NULL
 		},
 	},
-	"push": &object.Builtin{
+	"push": {
 		Fn: func(args ...object.Object) object.Object {
 			if len(args) != 2 {
 				return newError("wrong number of arguments, want=2, got=%d", len(args))
@@ -96,7 +96,7 @@ var builtins = map[string]*object.Builtin{
 			return &object.Array{Elements: newElements}
 		},
 	},
-	"puts": &object.Builtin{
+	"puts": {
 		Fn: func(args ...object.Object) object.Object {
 			for _, arg := range args {
 				fmt.Println(arg.Inspect())
