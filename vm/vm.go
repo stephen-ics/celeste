@@ -46,7 +46,6 @@ func (vm *VM) Run() error {
 				return err
 			}
 			
-			vm.push(&object.Integer{Value: result})
 		case code.OpPop:
 			vm.pop()
 		}
