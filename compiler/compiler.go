@@ -124,7 +124,7 @@ func (c *Compiler) Compile(node ast.Node) error {
 			return err
 		}
 
-		if c.lastInstructionIsPop() {
+		if c.lastInstructionIsPop() { // This is the previous instruction but also the LAST expression in the statement as all the others were already compiled in the loop, therefore this last instruction pop is omitted as the if statement has a return value
 			c.removeLastPop()
 		}
 

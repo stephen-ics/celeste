@@ -12,6 +12,8 @@ const StackSize = 2048
 var True = &object.Boolean{Value: true}
 var False = &object.Boolean{Value: false}
 
+var Null = &object.Null{}
+
 type VM struct {
 	constants []object.Object
 	instructions code.Instructions
@@ -36,7 +38,7 @@ func (vm *VM) Run() error {
 
 		switch op {
 		case code.OpConstant:
-			constIndex := code.ReadUint16((vm.instructions[ip+1:]))
+			constIndex := code.ReadUint16(vm.instructions[ip+1:]) // NOTE** THIS IS A LIST OF LISTS RIGHT? vm.instructions[ip+1:] returns the list of bytecode for that instruction while skipping the operator
 			ip += 2 // NOTE ** it only incrememnts by operandwidth, this is because ip++ is incremented in the for loop by 1 automatically
 
 			err := vm.push(vm.constants[constIndex])
@@ -73,6 +75,17 @@ func (vm *VM) Run() error {
 			if err != nil {
 				return err
 			}
+		case code.OpJumpNotTruthy:
+			pos := int(code.ReadUint16((vm.instructions[ip+1:])))
+			ip += 2
+
+			condition := vm.pop()
+			if !isTruthy(condition) {
+				ip = pos - 1
+			}
+		case code.OpJump:
+			pos := int(code.ReadUint16(vm.instructions[ip+1:]))
+			ip = pos - 1
 		case code.OpPop:
 			vm.pop()
 		}
@@ -203,6 +216,15 @@ func (vm *VM) executeMinusOperator() error {
 	value := operand.(*object.Integer).Value
 	return vm.push(&object.Integer{Value: -value})
 
+}
+
+func isTruthy(obj object.Object) bool {
+	switch obj := obj.(type) {
+	case *object.Boolean:
+		return obj.Value
+	default:
+		return true
+	}
 }
 
 func nativeBoolToBooleanObject(input bool) *object.Boolean {
