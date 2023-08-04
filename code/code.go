@@ -57,6 +57,9 @@ const (
 	OpPop
 	OpTrue
 	OpFalse
+	OpEqual
+	OpNotEqual
+	OpGreaterThan // No less than, will implement with compiler reordering
 )
 
 type Definition struct {
@@ -66,13 +69,16 @@ type Definition struct {
 
 var definitions = map[Opcode]*Definition { // This associates the operator (by opcode) to its definition -> operandwidth and name 
 	OpConstant: {"OpConstant", []int{2}},
-	OpAdd: {"OpAdd", []int{}}, // OpAdd has no operands
+	OpAdd: {"OpAdd", []int{}}, // None of these operators have operands, instead they operate on the top two elements on the stack 
 	OpSub: {"OpSub", []int{}},
 	OpMul: {"OpMul", []int{}},
 	OpDiv: {"OpDiv", []int{}},
 	OpPop: {"OpPop", []int{}},
 	OpTrue: {"OpTrue", []int{}},
 	OpFalse: {"OpFalse", []int{}},
+	OpEqual: {"OpEqual", []int{}},
+	OpNotEqual: {"OpNotEqual", []int{}},
+	OpGreaterThan: {"OpGreaterThan", []int{}}, 
 }
 
 func Lookup(op byte) (*Definition, error) {
