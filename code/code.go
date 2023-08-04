@@ -62,6 +62,8 @@ const (
 	OpGreaterThan // No less than, will implement with compiler reordering
 	OpMinus
 	OpBang
+	OpJumpNotTruthy
+	OpJump
 )
 
 type Definition struct {
@@ -83,6 +85,8 @@ var definitions = map[Opcode]*Definition { // This associates the operator (by o
 	OpGreaterThan: {"OpGreaterThan", []int{}}, 
 	OpMinus: {"OpMinus", []int{}},
 	OpBang: {"OpBang", []int{}},
+	OpJumpNotTruthy: {"OpJumpNotTruthy", []int{2}},
+	OpJump: {"OpJump", []int{2}},
 }
 
 func Lookup(op byte) (*Definition, error) {
