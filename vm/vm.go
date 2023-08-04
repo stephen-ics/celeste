@@ -40,14 +40,16 @@ func (vm *VM) Run() error {
 			if err != nil {
 				return err
 			}	
-			case code.OpAdd:
-				right := vm.pop() // This assumes the right operator is the last one to be pushed onto the stack, this will affect the result for operators like "-"
-				left := vm.pop()
-				rightValue := right.(*object.Integer).Value
-				leftValue := left.(*object.Integer).Value
+		case code.OpAdd:
+			right := vm.pop() // This assumes the right operator is the last one to be pushed onto the stack, this will affect the result for operators like "-"
+			left := vm.pop()
+			rightValue := right.(*object.Integer).Value
+			leftValue := left.(*object.Integer).Value
 
-				result := leftValue + rightValue
-				vm.push(&object.Integer{Value: result})
+			result := leftValue + rightValue
+			vm.push(&object.Integer{Value: result})
+		case code.OpPop:
+			vm.pop()
 		}
 	}
 
@@ -78,4 +80,8 @@ func (vm *VM) pop() object.Object {
 	vm.sp--
 
 	return o
+}
+
+func (vm *VM) LastPoppedStackElem() object.Object {
+	return vm.stack[vm.sp]
 }
