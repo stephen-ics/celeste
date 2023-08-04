@@ -51,6 +51,9 @@ func (ins Instructions) fmtInstruction(def *Definition, operands []int) string {
 const (
 	OpConstant Opcode = iota // Push constant onto stack opcode number (0)
 	OpAdd
+	OpSub
+	OpMul
+	OpDiv
 	OpPop
 )
 
@@ -62,6 +65,9 @@ type Definition struct {
 var definitions = map[Opcode]*Definition { // This associates the operator (by opcode) to its definition -> operandwidth and name 
 	OpConstant: {"OpConstant", []int{2}},
 	OpAdd: {"OpAdd", []int{}}, // OpAdd has no operands
+	OpSub: {"OpSub", []int{}},
+	OpMul: {"OpMul", []int{}},
+	OpDiv: {"OpDiv", []int{}},
 	OpPop: {"OpPop", []int{}},
 }
 

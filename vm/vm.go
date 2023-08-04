@@ -40,13 +40,12 @@ func (vm *VM) Run() error {
 			if err != nil {
 				return err
 			}	
-		case code.OpAdd:
-			right := vm.pop() // This assumes the right operator is the last one to be pushed onto the stack, this will affect the result for operators like "-"
-			left := vm.pop()
-			rightValue := right.(*object.Integer).Value
-			leftValue := left.(*object.Integer).Value
-
-			result := leftValue + rightValue
+		case code.OpAdd, code.OpSub, code.OpMul, code.OpDiv:
+			err := vm.executeBinaryOperation(op)
+			if err != nil {
+				return err
+			}
+			
 			vm.push(&object.Integer{Value: result})
 		case code.OpPop:
 			vm.pop()
@@ -69,7 +68,7 @@ func (vm *VM) push(o object.Object) error {
 		return fmt.Errorf("stack overflow")
 	}
 
-	vm.stack[vm.sp] = o // Pushing the object onto the virtual machine stack 
+	vm.stack[vm.sp] = o // Overrides the previously popped element in the stack, then increments to the next available spot in the stack
 	vm.sp++
 
 	return nil
@@ -83,5 +82,41 @@ func (vm *VM) pop() object.Object {
 }
 
 func (vm *VM) LastPoppedStackElem() object.Object {
-	return vm.stack[vm.sp]
+	return vm.stack[vm.sp] // Because it is now popped off, therefore sp-- + 1 -> sp
+}
+
+func (vm *VM) executeBinaryOperation(op code.Opcode) error {
+	right := vm.pop() // This assumes the right operator is the last one to be pushed onto the stack, this will affect the result for operators like "-"
+	left := vm.pop()
+
+	leftType := left.Type()
+	rightType := right.Type()
+
+	if leftType == object.INTEGER_OBJ && rightType == object.INTEGER_OBJ {
+		return vm.executeBinaryIntegerOperation(op, left, right)
+	}
+
+	return fmt.Errorf("unsupported types for binary operation: %s %s", leftType, rightType)
+}
+
+func (vm *VM) executeBinaryIntegerOperation(op code.Opcode, left, right object.Object) error {
+	leftValue := left.(*object.Integer).Value
+	rightValue := right.(*object.Integer).Value
+
+	var result int64
+
+	switch op {
+	case code.OpAdd:
+		result = leftValue + rightValue
+	case code.OpSub:
+		result = leftValue - rightValue
+	case code.OpMul:
+		result = leftValue * rightValue
+	case code.OpDiv:
+		result = leftValue / rightValue
+	default: 
+		return fmt.Errorf("unknown integer operator: %d", op)
+	}
+
+	return vm.push(&object.Integer{Value: result})
 }
