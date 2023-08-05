@@ -37,6 +37,12 @@ func New(bytecode *compiler.Bytecode) *VM {
 	}
 }
 
+func NewWithGlobalsStore(bytecode *compiler.Bytecode, s []object.Object) *VM {
+	vm := New(bytecode)
+	vm.globals = s
+	return vm
+}
+
 func (vm *VM) Run() error {
 	for ip := 0; ip < len(vm.instructions); ip++ { // ip = instruction pointer
 		op := code.Opcode(vm.instructions[ip]) // opcode [byte] [byte] -> index =0 -> finds op code index += 2 -> index = 2 -> instructions[2] = byte not new operator??
