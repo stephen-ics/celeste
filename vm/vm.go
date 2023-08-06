@@ -140,14 +140,14 @@ func (vm *VM) Run() error {
 
 			frame := vm.currentFrame()
 
-			vm.stack[frame.basePointer+int(localIndex)] = vm.pop()
+			vm.stack[frame.basePointer+int(localIndex)] = vm.pop() // Sets the local variable to basePointer + localIndex of the variable e.g Index 0 will be basePointer Index 1 will be basePointer + 1
 		case code.OpGetLocal:
 			localIndex := code.ReadUint8(ins[ip+1:])
 			vm.currentFrame().ip += 1
 			
 			frame := vm.currentFrame()
 
-			err := vm.push(vm.stack[frame.basePointer+int(localIndex)])
+			err := vm.push(vm.stack[frame.basePointer+int(localIndex)]) // Pushing the value that the local variable should be at based on the localIndex operand passed in by the Op.GetLocal operand
 			if err != nil {
 				return err
 			}

@@ -169,9 +169,9 @@ func ReadOperands(def *Definition, ins Instructions) ([]int, int) {
 }
 
 func ReadUint8(ins Instructions) uint8 { 
-	return uint8(ins[0])
+	return uint8(ins[0]) // Though the remaining list of instructions is passed in as an argument ins[0] knows to only take the next byte as we know the operand is one byte
 }
 
 func ReadUint16(ins Instructions) uint16 {
-	return binary.BigEndian.Uint16(ins)
+	return binary.BigEndian.Uint16(ins) // Likewise as mentioned above but binary.BigEndian.Uint16(ins) knows only to take the next two bytes
 }
