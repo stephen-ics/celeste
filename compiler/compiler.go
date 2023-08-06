@@ -259,6 +259,7 @@ func (c *Compiler) Compile(node ast.Node) error {
 		}
 
 		c.emit(code.OpIndex)
+
 	case *ast.FunctionLiteral:
 		c.enterScope()
 		
@@ -275,10 +276,15 @@ func (c *Compiler) Compile(node ast.Node) error {
 			c.emit(code.OpReturn)
 		}
 
+		numLocals := c.symbolTable.numDefinitions
 		instructions := c.leaveScope() // Returns compiled instructions of the scope within the function
 
-		compiledFn := &object.CompiledFunction{Instructions: instructions}
+		compiledFn := &object.CompiledFunction{
+			Instructions: instructions,
+			NumLocals: numLocals,
+		}
 		c.emit(code.OpConstant, c.addConstant(compiledFn))
+
 	case *ast.ReturnStatement:
 		err := c.Compile(node.ReturnValue)
 		if err != nil {
@@ -286,6 +292,7 @@ func (c *Compiler) Compile(node ast.Node) error {
 		}
 
 		c.emit(code.OpReturnValue)
+
 	case *ast.CallExpression:
 		err := c.Compile(node.Function)
 		if err != nil {
