@@ -125,8 +125,21 @@ func (vm *VM) Run() error {
 			err := vm.push(array)
 			if err != nil {
 				return err
-			}
+			}	
+		case code.OpHash:
+			numElements := int(code.ReadUint16(vm.instructions[ip+1:]))
+			ip += 2
 
+			hash, err := vm.buildHash(vm.sp-numElements, vm.sp)
+			if err != nil {
+				return err
+			}
+			vm.sp = vm.sp - numElements
+			
+			err = vm.push(hash)
+			if err != nil {
+				return err
+			}
 		case code.OpPop:
 			vm.pop()
 		}
@@ -281,10 +294,30 @@ func (vm *VM) buildArray(startIndex, endIndex int) object.Object {
 	elements := make([]object.Object, endIndex-startIndex)
 
 	for i := startIndex; i < endIndex; i++ {
-		elements[i-startIndex] = vm.stack[i] 
-	}
+		elements[i-startIndex] = vm.stack[i] // Wouldn't this be FIFO...? Because stack[i] and i increments so it starts from the bottom of the stack and goes to the top?
+	} // As in the array is LIFO but the constants inside of the array are FIFO??? (when building the array)
 
 	return &object.Array{Elements: elements}
+}
+
+func (vm *VM) buildHash(startIndex, endIndex int) (object.Object, error) {
+	hashedPairs := make(map[object.HashKey]object.HashPair)
+
+	for i := startIndex; i < endIndex; i += 2 {
+		key := vm.stack[i]
+		value := vm.stack[i+1]
+
+		pair := object.HashPair{Key: key, Value: value}
+
+		hashKey, ok := key.(object.Hashable)
+		if !ok {
+			return nil, fmt.Errorf("unusable as hash key: %s", key.Type())
+		}
+
+		hashedPairs[hashKey.HashKey()] = pair
+	}
+
+	return &object.Hash{Pairs: hashedPairs}, nil
 }
 
 func isTruthy(obj object.Object) bool {

@@ -148,7 +148,7 @@ func (b *Boolean) HashKey() HashKey {
 	return HashKey{Type: b.Type(), Value: value} // Does 0 and 1 overlap hashkey() int? --> Different memory representation for int and uint64?
 }
 
-func (i *Integer) HashKey() HashKey {
+func (i *Integer) HashKey() HashKey { // These functions return a HashKey object with the correct type and value
 	return HashKey{Type: i.Type(), Value: uint64(i.Value)}
 }
 
