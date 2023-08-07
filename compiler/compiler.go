@@ -283,8 +283,13 @@ func (c *Compiler) Compile(node ast.Node) error {
 			c.emit(code.OpReturn)
 		}
 
+		freeSymbols := c.symbolTable.FreeSymbols // Important that this is called before we leave the scope, as we would not have access to it after we leave the scope
 		numLocals := c.symbolTable.numDefinitions
 		instructions := c.leaveScope() // Returns compiled instructions of the scope within the function
+
+		for _, s := range freeSymbols {
+			c.loadSymbol(s) // Loading the free symbol right after leaving the scope right before the closure OpCode is emitted
+		} 
 
 		compiledFn := &object.CompiledFunction{
 			Instructions: instructions,
@@ -292,8 +297,8 @@ func (c *Compiler) Compile(node ast.Node) error {
 			NumParameters: len(node.Parameters),
 		}
 		
-		fnIndex := c.addConstant(compiledFn) // add constant returns the location of the added constant
-		c.emit(code.OpClosure, fnIndex, 0)
+		fnIndex := c.addConstant(compiledFn) // Add constant returns the location of the added constant
+		c.emit(code.OpClosure, fnIndex, len(freeSymbols)) // Length of free symbols is the amount of free symbols aka the second operand
 
 	case *ast.ReturnStatement:
 		err := c.Compile(node.ReturnValue)
@@ -437,5 +442,7 @@ func (c *Compiler) loadSymbol(s Symbol) {
 		c.emit(code.OpGetLocal, s.Index)
 	case BuiltinScope:
 		c.emit(code.OpGetBuiltin, s.Index)
+	case FreeScope:
+		c.emit(code.OpGetFree, s.Index)
 	}
 }
