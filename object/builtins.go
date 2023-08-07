@@ -33,7 +33,7 @@ var Builtins = []struct {
 			}
 
 			if args[0].Type() != ARRAY_OBJ {
-				return newError("argument to `first` must be array, got %s", args[0].Type())
+				return newError("argument to `first` must be ARRAY, got=%s", args[0].Type())
 			}
 
 			arr := args[0].(*Array)
@@ -107,7 +107,7 @@ var Builtins = []struct {
 			newElements := make([]Object, length+1, length+1)
 			copy(newElements, arr.Elements)
 			newElements[length] = args[1]
-			
+
 			return &Array{Elements: newElements}
 		},},
 	},

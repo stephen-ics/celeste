@@ -41,7 +41,7 @@ func New() *Compiler {
 	symbolTable := NewSymbolTable()
 
 	for i, v := range object.Builtins {
-		symbolTable.DefineBuiltin(i, v.Name) // Only defines index and name (will use getBuiltinByName presumably to find actual instructions)
+		symbolTable.DefineBuiltin(i, v.Name) // Only defines index and name, the index will be of use when finding the correct function in the builtins slice
 	}
 
 	return &Compiler {
