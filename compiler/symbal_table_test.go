@@ -291,7 +291,7 @@ func TestResolveUnresolvableFree(t *testing.T) {
 
 	for _, name := range expectedUnresolvable {
 		_, ok := secondLocal.Resolve(name)
-		if !ok {
+		if ok {
 			t.Errorf("name %s resolved, but was expected not to", name)
 		}
 	}
