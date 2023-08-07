@@ -469,6 +469,10 @@ func (vm *VM) callFunction(numArgs int) error {
 		return fmt.Errorf("calling non-function") // basePointer + local-binding index = specific local variable binding
 	}
 
+	if numArgs != fn.NumParameters {
+		return fmt.Errorf("wrong number of arguments: want=%d, got=%d", fn.NumParameters, numArgs)
+	}
+
 	frame := NewFrame(fn, vm.sp-numArgs) // We subtract vm.sp by the number of arguments because the arguments are called as OpConstants onto the stack before basePointer is set to vm.sp, and therefore we need to decrement vm.sp to properly index the arguments, else it will lead to basePointer plus the index of the local binding pointing to certain empty slots
 	vm.pushFrame(frame) 
 	vm.sp = frame.basePointer + fn.NumLocals 
