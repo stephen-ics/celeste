@@ -262,6 +262,10 @@ func (c *Compiler) Compile(node ast.Node) error {
 
 	case *ast.FunctionLiteral:
 		c.enterScope()
+
+		for _, p := range node.Parameters {
+			c.symbolTable.Define(p.Value)
+		}
 		
 		err := c.Compile(node.Body)
 		if err != nil {
@@ -283,6 +287,7 @@ func (c *Compiler) Compile(node ast.Node) error {
 			Instructions: instructions,
 			NumLocals: numLocals,
 		}
+		
 		c.emit(code.OpConstant, c.addConstant(compiledFn))
 
 	case *ast.ReturnStatement:

@@ -62,7 +62,7 @@ func (vm *VM) Run() error {
 	for vm.currentFrame().ip < len(vm.currentFrame().Instructions())-1 {
 		vm.currentFrame().ip++
 
-		ip = vm.currentFrame().ip
+		ip = vm.currentFrame().ip // Keeps track of the current ip being process in case it is incremented by the ip is needed to access the operand
 		ins = vm.currentFrame().Instructions()
 		op = code.Opcode(ins[ip])
 
@@ -185,15 +185,14 @@ func (vm *VM) Run() error {
 				return err
 			}
 		case code.OpCall:
+			numArgs := code.ReadUint8(ins[ip+1:])
 			vm.currentFrame().ip += 1
-			fn, ok := vm.stack[vm.sp-1].(*object.CompiledFunction)
-			if !ok  {
-				return fmt.Errorf("calling non-function")
+
+			err := vm.callFunction(int(numArgs))
+			if err != nil {
+				return err
 			}
 
-			frame := NewFrame(fn, vm.sp)
-			vm.pushFrame(frame)
-			vm.sp = frame.basePointer + fn.NumLocals
 		case code.OpReturnValue:
 			returnValue := vm.pop()
 
@@ -462,4 +461,17 @@ func (vm *VM) pushFrame(f *Frame) {
 func (vm *VM) popFrame() *Frame {
 	vm.framesIndex--
 	return vm.frames[vm.framesIndex]
+}
+
+func (vm *VM) callFunction(numArgs int) error {
+	fn, ok := vm.stack[vm.sp-1-numArgs].(*object.CompiledFunction) 
+	if !ok  {
+		return fmt.Errorf("calling non-function") // basePointer + local-binding index = specific local variable binding
+	}
+
+	frame := NewFrame(fn, vm.sp-numArgs) // We subtract vm.sp by the number of arguments because the arguments are called as OpConstants onto the stack before basePointer is set to vm.sp, and therefore we need to decrement vm.sp to properly index the arguments, else it will lead to basePointer plus the index of the local binding pointing to certain empty slots
+	vm.pushFrame(frame) 
+	vm.sp = frame.basePointer + fn.NumLocals 
+
+	return nil
 }
