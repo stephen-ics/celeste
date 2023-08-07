@@ -31,16 +31,22 @@ type CompilationScope struct {
 	previousInstruction EmittedInstruction
 }
 
-
 func New() *Compiler {
 	mainScope := CompilationScope{
 		instructions: code.Instructions{},
 		lastInstruction: EmittedInstruction{},
 		previousInstruction: EmittedInstruction{},
 	}
+
+	symbolTable := NewSymbolTable()
+
+	for i, v := range object.Builtins {
+		symbolTable.DefineBuiltin(i, v.Name) // Only defines index and name (will use getBuiltinByName presumably to find actual instructions)
+	}
+
 	return &Compiler {
 		constants: []object.Object{},
-		symbolTable: NewSymbolTable(),
+		symbolTable: symbolTable,
 		scopes: []CompilationScope{mainScope},
 		scopeIndex: 0,
 	}
@@ -193,11 +199,8 @@ func (c *Compiler) Compile(node ast.Node) error {
 		if !ok {
 			return fmt.Errorf("Undefined variable %s", node.Value)
 		}
-		if symbol.Scope == GlobalScope {
-			c.emit(code.OpGetGlobal, symbol.Index)	
-		} else {
-			c.emit(code.OpGetLocal, symbol.Index)
-		}
+
+		c.loadSymbol(symbol)
 
 	case *ast.IntegerLiteral:
 		integer := &object.Integer{Value: node.Value}
@@ -344,12 +347,12 @@ func (c *Compiler) currentInstructions() code.Instructions {
 }
 
 func (c *Compiler) addInstruction(ins []byte) int { //Adds the operator and operand to the instructions slice Note** This is NOT the stack, rather, the stack is ran and updated by the VM
-	posNewInstruction := len(c.currentInstructions()) // Position of the newly added instruction
-	updatedInstructions := append(c.currentInstructions(), ins...)
+	posNewInstruction := len(c.currentInstructions()) // Starting position of the newly added instruction
+	updatedInstructions := append(c.currentInstructions(), ins...) // IMPORTANT*** when a slice of bytes is appended to a slice of bytes, each element is appended 1 by 1, this will NOT result in a slice of slices
 
 	c.scopes[c.scopeIndex].instructions = updatedInstructions
 
-	return posNewInstruction // Why not -1? -> Some LIFO data structure stuff?
+	return posNewInstruction // You do not -1 because you append to the array, and this returns the STARTING POSITION of the newly added instruction
 }
 
 func(c *Compiler) setLastInstruction(op code.Opcode, pos int) {
@@ -423,4 +426,15 @@ func (c *Compiler) replaceLastPopWithReturn() {
 	c.replaceInstructions(lastPos, code.Make(code.OpReturnValue))
 
 	c.scopes[c.scopeIndex].lastInstruction.Opcode = code.OpReturnValue
+}
+
+func (c *Compiler) loadSymbol(s Symbol) {
+	switch s.Scope {
+	case GlobalScope:
+		c.emit(code.OpGetGlobal, s.Index)
+	case LocalScope:
+		c.emit(code.OpGetLocal, s.Index)
+	case BuiltinScope:
+		c.emit(code.OpGetBuiltin, s.Index)
+	}
 }

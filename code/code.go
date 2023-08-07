@@ -75,6 +75,7 @@ const (
 	OpReturn
 	OpSetLocal
 	OpGetLocal
+	OpGetBuiltin
 )
 
 type Definition struct {
@@ -109,6 +110,7 @@ var definitions = map[Opcode]*Definition { // This associates the operator (by o
 	OpReturn: {"OpReturn", []int{}},
 	OpSetLocal: {"OpSetLocal", []int{1}},
 	OpGetLocal: {"OpGetLocal", []int{1}},
+	OpGetBuiltin: {"OpGetBuiltin", []int{1}},
 }
 
 func Lookup(op byte) (*Definition, error) {
