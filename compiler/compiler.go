@@ -183,11 +183,13 @@ func (c *Compiler) Compile(node ast.Node) error {
 		}
 	
 	case *ast.LetStatement:
+		symbol := c.symbolTable.Define(node.Name.Value) // Defines the name to which the function will be bound right before the function is compiled, this will allow the function's body to reference the name of the function, allowing for RECURSIVE FUNCTIONS!!!
+
 		err := c.Compile(node.Value)
 		if err != nil {
 			return err
 		}
-		symbol := c.symbolTable.Define(node.Name.Value)	
+
 		if symbol.Scope == GlobalScope {
 			c.emit(code.OpSetGlobal, symbol.Index)
 		} else {
