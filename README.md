@@ -1,8 +1,6 @@
 # Celest
 
 > Celest: A minimalist yet powerful language with higher-order functions and handy built-ins, perfect for learning and experimenting with programming concepts.
->
-> Inspired by the book "Writing a Compiler in GO by Thorsten Ball"
 
 <!-- PROJECT SHIELDS -->
 ![Commits][commits-shield]
