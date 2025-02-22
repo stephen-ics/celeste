@@ -30,7 +30,7 @@ If you would like contact me and find out more information about my projects, fe
 [forks-url]: https://github.com/stephen-ics/celeste/network/members
 [stars-shield]: https://img.shields.io/github/stars/stephen-ics/celeste.svg?style=for-the-badge
 [stars-url]: https://github.com/stephen-ics/celeste/stargazers
-[license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/badge/license-MIT-green?style=for-the-badge
 [license-url]: https://opensource.org/license/mit/
 [commits-shield]:https://img.shields.io/github/commit-activity/t/stephen-ics/celeste.svg?style=for-the-badge
 [commits-url]:https://github.com/stephen-ics/celeste/commits
